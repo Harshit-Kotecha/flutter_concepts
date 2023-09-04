@@ -12,7 +12,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // A boolean and text to show whether we are making API calls or not
   bool showApiBtn = false;
-  String apiTxt = "no api calls now";
+  String apiTxt = "";
+
+  // A timer to reduce calls
+  Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -21,38 +24,41 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Debouncing API calls'),
         ),
-        body: Column(
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            TextField(
-              decoration: const InputDecoration(
-                label: Text('Search here'),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 30,
               ),
-              onChanged: (value) {
-                // Setting timer to stop making API calls on every change
-                // ! However there is some bug, because this is just delaying the call
-                // ! Not actually reducing the calls
-                // ! So we need some other workaround
-                Timer(const Duration(seconds: 3), () {
-                  // Update state to show API call is made
-                  setState(() {
-                    showApiBtn = true;
-                    apiTxt = 'Searching... $value';
-                  });
-                });
-              },
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            if (showApiBtn)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(apiTxt),
+              TextField(
+                decoration: const InputDecoration(
+                  label: Text('Search here'),
+                ),
+                onChanged: (value) {
+                  // Use timer to stop making API calls on every change
+                  // Now it will only call timer if it is not running or null
+                  // This saves API call
+                  apiTxt = value;
+                  _timer ??= Timer(
+                      const Duration(seconds: 3),
+                      () => setState(() {
+                            showApiBtn = true;
+                            apiTxt = 'Searching... $apiTxt';
+                            _timer = null;
+                          }));
+                },
               ),
-          ],
+              const SizedBox(
+                height: 30,
+              ),
+              if (showApiBtn)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(apiTxt),
+                ),
+            ],
+          ),
         ),
       ),
     );
