@@ -23,35 +23,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: [
-            const SizedBox(
-              height: 30,
-            ),
-            TextField(
-              decoration: const InputDecoration(
-                label: Text('Search here'),
-              ),
-              onChanged: (value) {
-                // Setting timer to stop making API calls on every change
-                // ! However there is some bug, because this is just delaying the call
-                // ! Not actually reducing the calls
-                // ! So we need some other workaround
-                Timer(const Duration(seconds: 3), () {
-                  // Update state to show API call is made
-                  setState(() {
-                    showApiBtn = true;
-                    apiTxt = 'Searching... $value';
-                  });
-                });
-              },
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            if (showApiBtn)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(apiTxt),
-              ),
+            Text('data'),
           ],
         ),
       ),
